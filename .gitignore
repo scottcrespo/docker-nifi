@@ -1,1 +1,9 @@
 nifi-archive.zip
+.DS_Store
+CN=*
+*.pem
+*.key
+*.retry
+*.backup
+nifi-archive/
+localhost/

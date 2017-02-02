@@ -1,0 +1,43 @@
+- hosts: localhost
+  connection: local
+
+  tasks:
+
+    - name: Download Binaries
+      command: "wget https://archive.apache.org/dist/nifi/{{NIFI_VERSION}}/nifi-{{NIFI_VERSION}}-bin.tar.gz -o {{PWD}}/nifi-archive.zip"
+      args:
+        creates: "{{PWD}}/nifi-archive.zip"
+
+    - name: make unzip destination
+      file:
+        path: nifi-archive
+        state: directory
+
+    - name: unzip archive
+      unarchive:
+        src: nifi-archive.zip
+        dest: nifi-archive
+
+    - name: generate config files and certs
+      command: "nifi-toolkit/bin/tls-toolkit.sh standalone -n '{{HOSTNAME}}' -C 'CN=nifi,OU=NIFI' -f 'templates/nifi.properties' -O"
+
+    - name: interpolate template
+      template:
+        src: templates/Dockerfile
+        dest: ./Dockerfile
+
+    - name: build image
+      command: "docker build -t nifi ."
+
+
+  vars:
+    PWD: "{{ lookup('env','PWD') }}"
+    HOSTNAME: localhost
+    NIFI_VERSION: 1.1.1
+    PORTS:
+      - 8080
+      - 9443
+      - 2181
+      - 2888
+      - 3888
+      - 9001

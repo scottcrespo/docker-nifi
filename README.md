@@ -15,7 +15,7 @@ The current image created by this project creates a single-instance NiFi cluster
 
 ### Run
 
-`docker run -it -p 8080:8080 --rm --name nifi --hostname nifi nifi`
+`docker run -it -p 8080:8080 -p 9443:9443 --rm --name nifi --hostname nifi nifi`
 
 **Run parameters:**
 
