@@ -9,16 +9,10 @@ RUN groupadd -g $gid nifi || groupmod -n nifi `getent group $gid | cut -d: -f1`
 RUN useradd --shell /bin/bash -u $uid -g $gid -m nifi
 
 # /OPT/NIFI
-#RUN mkdir -p /opt/nifi
 COPY nifi-archive/nifi-$NIFI_VERSION /opt/nifi
-
-# /OPT/NIFI/CONF
-# RUN mkdir /opt/nifi/conf
 COPY files/* localhost/* /opt/nifi/conf/
 
 RUN chown -R nifi:nifi /opt/nifi
-
-# /HOME/NIFI
 RUN chown -R nifi:nifi /home/nifi
 
 USER nifi
