@@ -1,4 +1,5 @@
-nifi-archive.zip
+nifi*.zip
+nifi*.tar.gz
 .DS_Store
 CN=*
 *.pem

@@ -4,9 +4,9 @@
   tasks:
 
     - name: Download Binaries
-      command: "wget https://archive.apache.org/dist/nifi/{{NIFI_VERSION}}/nifi-{{NIFI_VERSION}}-bin.tar.gz -o {{PWD}}/nifi-archive.zip"
+      command: "wget https://archive.apache.org/dist/nifi/{{NIFI_VERSION}}/nifi-{{NIFI_VERSION}}-bin.tar.gz -o {{PWD}}/nifi-archive.tar.gz"
       args:
-        creates: "{{PWD}}/nifi-archive.zip"
+        creates: "{{PWD}}/nifi-archive.tar.gz"
 
     - name: make unzip destination
       file:
@@ -15,16 +15,24 @@
 
     - name: unzip archive
       unarchive:
-        src: nifi-archive.zip
+        src: nifi-archive.tar.gz
         dest: nifi-archive
 
     - name: generate config files and certs
       command: "nifi-toolkit/bin/tls-toolkit.sh standalone -n '{{HOSTNAME}}' -C 'CN=nifi,OU=NIFI' -f 'templates/nifi.properties' -O"
 
+    - name: sed out https hostname
+      command: "sed -ie 's/nifi.web.https.host=.*/nifi.web.https.host=/g' {{HOSTNAME}}/nifi.properties"
+
     - name: interpolate nifi.properties
       template:
         src: "{{HOSTNAME}}/nifi.properties"
         dest: "{{HOSTNAME}}/nifi.properties"
+
+    - name: add intial admin identity
+      template:
+        src: "templates/authorizers.xml"
+        dest: "{{HOSTNAME}}/authorizers.xml"
 
     - name: interpolate template
       template:

@@ -1,0 +1,1 @@
+curl --cert CN=nifi_OU=NIFI.p12:sdrlw0F --cacert nifi-cert.pem https://localhost:9443/nifi-api/system-diagnostics
