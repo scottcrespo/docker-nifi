@@ -18,12 +18,9 @@
         src: nifi-archive.zip
         dest: nifi-archive
 
-    - name: generate config files and certs
-      command: "nifi-toolkit/bin/tls-toolkit.sh standalone -n '{{HOSTNAME}}' -C 'CN=nifi,OU=NIFI' -f 'templates/nifi.properties' -O"
-
     - name: interpolate nifi.properties
       template:
-        src: "{{HOSTNAME}}/nifi.properties"
+        src: "conf/nifi.properties"
         dest: "{{HOSTNAME}}/nifi.properties"
 
     - name: interpolate template
@@ -43,6 +40,5 @@
       - 2181
       - 2888
       - 3888
-      - 8080
       - 9001
-      - 9443
+      - 8080

@@ -17,12 +17,11 @@ RUN chown -R nifi:nifi /home/nifi
 
 USER nifi
 
-EXPOSE 8080
-EXPOSE 9443
 EXPOSE 2181
 EXPOSE 2888
 EXPOSE 3888
+EXPOSE 8080
 EXPOSE 9001
+EXPOSE 9443
 
-CMD /opt/nifi/bin/nifi.sh run
-#CMD /bin/bash
+CMD /opt/nifi/bin/nifi.sh start && tail -f /opt/nifi/logs/*

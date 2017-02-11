@@ -21,5 +21,4 @@ USER nifi
 EXPOSE {{PORT}}
 {% endfor %}
 
-CMD /opt/nifi/bin/nifi.sh run
-#CMD /bin/bash
+CMD /opt/nifi/bin/nifi.sh start && tail -f /opt/nifi/logs/*
