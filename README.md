@@ -1,23 +1,41 @@
 # docker-nifi
 Creates Docker images for the Apache NiFi Project.
 
-The current image created by this project creates a single-instance NiFi cluster (unsecured), which is useful for development.
+The current image created by this project creates a single-instance NiFi cluster (secure or unsecured), which is useful for development.
 
 ## NiFi Versions
 
 1.1.1
 
+## Requirements
+
+- ansible >= 2.2
+
 ## Usage
 
-### Build
+### Build the Docker Image
 
-`docker build -t nifi .`
+**Build an unsecure, single-instance NiFi cluster**
 
-### Run
+`ansible-playbook unsecure.yml`
+
+**Build a secure, single-instance NiFi cluster**
+
+`ansible-playbook secure.yml`
+
+### Run the Docker Image
 
 `docker run -it -p 8080:8080 -p 9443:9443 --rm --name nifi --hostname nifi nifi`
 
-**Run parameters:**
+### Test Running Container
+
+`curl localhost:8080/nifi-api/system-diagnostics`
+
+You should receive a successful response from the server.
+
+Note: Secure installation does not yet respond to the curl request (requires more development).
+
+**Run parameters explained:**
 
 | param | description |
 | --- | --- |
