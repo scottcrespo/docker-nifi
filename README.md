@@ -11,6 +11,8 @@ The current image created by this project creates a single-instance NiFi cluster
 
 - ansible >= 2.2
 
+To install ansible, run `pip install ansible`
+
 ## Usage
 
 ### Build the Docker Image
