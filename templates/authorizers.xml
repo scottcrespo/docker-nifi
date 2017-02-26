@@ -56,9 +56,8 @@
         <property name="Initial Admin Identity">CN=nifi, OU=NIFI</property>
         <property name="Legacy Authorized Users File"></property>
 
-        <!-- Provide the identity (typically a DN) of each node when clustered, see above description of Node Identity.
-        <property name="Node Identity 1"></property>
-        <property name="Node Identity 2"></property>
-        -->
+        <!-- Provide the identity (typically a DN) of each node when clustered, see above description of Node Identity. -->
+        <property name="Node Identity 1">CN={{HOSTNAME}}, OU=NIFI</property>
+
     </authorizer>
 </authorizers>
