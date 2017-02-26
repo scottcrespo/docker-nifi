@@ -1,56 +1,22 @@
 - hosts: localhost
   connection: local
 
-  tasks:
+  roles:
+    - nifi_secure
 
-    - name: Download Binaries
-      command: "wget https://archive.apache.org/dist/nifi/{{NIFI_VERSION}}/nifi-{{NIFI_VERSION}}-bin.tar.gz -o {{PWD}}/nifi-archive.tar.gz"
-      args:
-        creates: "{{PWD}}/nifi-archive.tar.gz"
+  vars_prompt:
 
-    - name: make unzip destination
-      file:
-        path: nifi-archive
-        state: directory
+    - name: "HOSTNAME"
+      prompt: "Hostname of the NiFi instance."
+      default: "localhost"
+      private: no
 
-    - name: unzip archive
-      unarchive:
-        src: nifi-archive.tar.gz
-        dest: nifi-archive
-
-    - name: generate config files and certs
-      command: "nifi-toolkit/bin/tls-toolkit.sh standalone -n '{{HOSTNAME}}' -C 'CN=nifi,OU=NIFI' -f 'templates/nifi.properties' -O"
-
-    - name: sed out https hostname
-      command: "sed -ie 's/nifi.web.https.host=.*/nifi.web.https.host=/g' {{HOSTNAME}}/nifi.properties"
-
-    - name: interpolate nifi.properties
-      template:
-        src: "{{HOSTNAME}}/nifi.properties"
-        dest: "{{HOSTNAME}}/nifi.properties"
-
-    - name: interpolate authorizers template
-      template:
-        src: "templates/authorizers.xml"
-        dest: "{{HOSTNAME}}/authorizers.xml"
-
-    - name: interpolate template
-      template:
-        src: templates/Dockerfile
-        dest: ./Dockerfile
-
-    - name: build image
-      command: "docker build -t nifi ."
-
+    - name: "NIFI_VERSION"
+      prompt: "Version of NiFi you wish to build"
+      default: "1.1.1"
+      private: no
 
   vars:
-    PWD: "{{ lookup('env','PWD') }}"
     HOSTNAME: localhost
     NIFI_VERSION: 1.1.1
-    PORTS:
-      - 2181
-      - 2888
-      - 3888
-      - 8080
-      - 9001
-      - 9443
+    NIFI_CLIENT_NAME: "nifi-user"
