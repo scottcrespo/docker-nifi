@@ -1,0 +1,33 @@
+- name: get client cert password
+  command: "cat CN=nifi_OU=NIFI.password"
+  register: "password_stdout"
+
+- debug: "msg={{password_stdout}}"
+
+- name: set fact for nifi password
+  set_fact:
+    CLIENT_CERT_PASSWORD: "{{password_stdout['stdout_lines'][0]}}"
+
+- name: unencrypt p12 file
+  expect:
+    command: "openssl pkcs12 -in CN=nifi_OU=NIFI.p12 -nodes -out temp.pem"
+    responses:
+      'Enter Import Password.*': "{{CLIENT_CERT_PASSWORD}}"
+
+- name: generate p12 file without password
+  expect:
+    command: "openssl pkcs12 -export -in temp.pem  -out CN=nifi_OU=NIFI_unprotected.p12"
+    responses:
+      '.*Enter Export Password.*': ''
+
+- name: overwrite p12 file with generic password
+  expect:
+    command: "openssl pkcs12 -export -in temp.pem  -out CN=nifi_OU=NIFI.p12"
+    responses:
+      '.*Enter Export Password.*': 'dockernifi'
+
+- name: remove files
+  command: "rm {{item}}"
+  with_items:
+    - temp.pem
+    - CN=nifi_OU=NIFI.password
