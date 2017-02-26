@@ -1,0 +1,12 @@
+PWD: "{{ lookup('env','PWD') }}"
+PORTS:
+  - 2181
+  - 2888
+  - 3888
+  - 9001
+  - 9443
+
+ROLE: "nifi_secure"
+# HOSTNAME: localhost
+# NIFI_VERSION: 1.1.1
+# NIFI_CLIENT_NAME: "nifi-user"

@@ -1,0 +1,43 @@
+# - name: Download Binaries
+#   command: "wget https://archive.apache.org/dist/nifi/{{NIFI_VERSION}}/nifi-{{NIFI_VERSION}}-bin.tar.gz -o {{PWD}}/nifi-archive.tar.gz"
+#   args:
+#     creates: "{{PWD}}/nifi-archive.tar.gz"
+#
+# - name: make unzip destination
+#   file:
+#     path: nifi-archive
+#     state: directory
+#
+# - name: unzip archive
+#   unarchive:
+#     src: "{{PWD}}/nifi-archive.tar.gz"
+#     dest: "{{PWD}}/nifi-archive"
+
+- name: generate config files and certs
+  command: "{{PWD}}/nifi-toolkit/bin/tls-toolkit.sh standalone -n '{{HOSTNAME}}' -C 'CN=nifi,OU=NIFI' -f '{{PWD}}/roles/{{ROLE}}/templates/nifi.properties' -O"
+
+- name: sed out https hostname
+  command: "sed -ie 's/nifi.web.https.host=.*/nifi.web.https.host=/g' {{PWD}}/{{HOSTNAME}}/nifi.properties"
+
+- name: interpolate nifi.properties
+  template:
+    src: "{{PWD}}/{{HOSTNAME}}/nifi.properties"
+    dest: "{{PWD}}/{{HOSTNAME}}/nifi.properties"
+
+- name: Copy files into hostname dir
+  copy:
+    src: files/
+    dest: "{{PWD}}/{{HOSTNAME}}/"
+
+- name: interpolate authorizers template
+  template:
+    src: "templates/authorizers.xml"
+    dest: "{{PWD}}/{{HOSTNAME}}/authorizers.xml"
+
+- name: interpolate template
+  template:
+    src: templates/Dockerfile
+    dest: "{{PWD}}/Dockerfile"
+
+- name: build image
+  command: "docker build -t nifi ."
